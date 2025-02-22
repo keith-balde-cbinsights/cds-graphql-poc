@@ -50,10 +50,12 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Company struct {
 		Ceo           func(childComplexity int) int
+		CompanyID     func(childComplexity int) int
 		FundingRounds func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Investments   func(childComplexity int) int
-		Locations     func(childComplexity int) int
+		InvestorID    func(childComplexity int) int
+		Location      func(childComplexity int) int
 		MarketCap     func(childComplexity int) int
 		Name          func(childComplexity int) int
 		OrgID         func(childComplexity int) int
@@ -107,7 +109,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		CompaniesByIDOrg func(childComplexity int, id string) int
+		CompaniesByIDOrg func(childComplexity int, ids []*string) int
 	}
 
 	Schema struct {
@@ -127,7 +129,7 @@ type MutationResolver interface {
 	CreateCompany(ctx context.Context, input model.NewCompany) (*model.Company, error)
 }
 type QueryResolver interface {
-	CompaniesByIDOrg(ctx context.Context, id string) ([]*model.Company, error)
+	CompaniesByIDOrg(ctx context.Context, ids []*string) ([]*model.Company, error)
 }
 
 type executableSchema struct {
@@ -156,6 +158,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Company.Ceo(childComplexity), true
 
+	case "Company.companyID":
+		if e.complexity.Company.CompanyID == nil {
+			break
+		}
+
+		return e.complexity.Company.CompanyID(childComplexity), true
+
 	case "Company.fundingRounds":
 		if e.complexity.Company.FundingRounds == nil {
 			break
@@ -177,12 +186,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Company.Investments(childComplexity), true
 
-	case "Company.locations":
-		if e.complexity.Company.Locations == nil {
+	case "Company.investorID":
+		if e.complexity.Company.InvestorID == nil {
 			break
 		}
 
-		return e.complexity.Company.Locations(childComplexity), true
+		return e.complexity.Company.InvestorID(childComplexity), true
+
+	case "Company.location":
+		if e.complexity.Company.Location == nil {
+			break
+		}
+
+		return e.complexity.Company.Location(childComplexity), true
 
 	case "Company.marketCap":
 		if e.complexity.Company.MarketCap == nil {
@@ -423,7 +439,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.CompaniesByIDOrg(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.CompaniesByIDOrg(childComplexity, args["ids"].([]*string)), true
 
 	case "Schema.mutation":
 		if e.complexity.Schema.Mutation == nil {
@@ -646,23 +662,23 @@ func (ec *executionContext) field_Query___type_argsName(
 func (ec *executionContext) field_Query_companiesByIdOrg_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_companiesByIdOrg_argsID(ctx, rawArgs)
+	arg0, err := ec.field_Query_companiesByIdOrg_argsIds(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["id"] = arg0
+	args["ids"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_companiesByIdOrg_argsID(
+func (ec *executionContext) field_Query_companiesByIdOrg_argsIds(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
+) ([]*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("ids"))
+	if tmp, ok := rawArgs["ids"]; ok {
+		return ec.unmarshalNID2ᚕᚖstring(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal []*string
 	return zeroVal, nil
 }
 
@@ -854,6 +870,94 @@ func (ec *executionContext) fieldContext_Company_orgID(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Company_investorID(ctx context.Context, field graphql.CollectedField, obj *model.Company) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Company_investorID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InvestorID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Company_investorID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Company",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Company_companyID(ctx context.Context, field graphql.CollectedField, obj *model.Company) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Company_companyID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CompanyID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Company_companyID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Company",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Company_name(ctx context.Context, field graphql.CollectedField, obj *model.Company) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Company_name(ctx, field)
 	if err != nil {
@@ -1030,8 +1134,8 @@ func (ec *executionContext) fieldContext_Company_status(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Company_locations(ctx context.Context, field graphql.CollectedField, obj *model.Company) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Company_locations(ctx, field)
+func (ec *executionContext) _Company_location(ctx context.Context, field graphql.CollectedField, obj *model.Company) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Company_location(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1044,7 +1148,7 @@ func (ec *executionContext) _Company_locations(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Locations, nil
+		return obj.Location, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1056,12 +1160,12 @@ func (ec *executionContext) _Company_locations(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.CompanyLocation)
+	res := resTmp.(*model.CompanyLocation)
 	fc.Result = res
-	return ec.marshalNCompanyLocation2ᚕᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐCompanyLocation(ctx, field.Selections, res)
+	return ec.marshalNCompanyLocation2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐCompanyLocation(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Company_locations(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Company_location(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Company",
 		Field:      field,
@@ -1762,6 +1866,10 @@ func (ec *executionContext) fieldContext_FundingRound_receiver(_ context.Context
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -1770,8 +1878,8 @@ func (ec *executionContext) fieldContext_FundingRound_receiver(_ context.Context
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -1829,6 +1937,10 @@ func (ec *executionContext) fieldContext_FundingRound_leadInvestor(_ context.Con
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -1837,8 +1949,8 @@ func (ec *executionContext) fieldContext_FundingRound_leadInvestor(_ context.Con
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -1899,6 +2011,10 @@ func (ec *executionContext) fieldContext_FundingRound_otherInvestors(_ context.C
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -1907,8 +2023,8 @@ func (ec *executionContext) fieldContext_FundingRound_otherInvestors(_ context.C
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -2201,6 +2317,10 @@ func (ec *executionContext) fieldContext_Investment_receiver(_ context.Context, 
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -2209,8 +2329,8 @@ func (ec *executionContext) fieldContext_Investment_receiver(_ context.Context, 
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -2271,6 +2391,10 @@ func (ec *executionContext) fieldContext_Investment_investor(_ context.Context, 
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -2279,8 +2403,8 @@ func (ec *executionContext) fieldContext_Investment_investor(_ context.Context, 
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -2473,6 +2597,10 @@ func (ec *executionContext) fieldContext_KeyPerson_company(_ context.Context, fi
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -2481,8 +2609,8 @@ func (ec *executionContext) fieldContext_KeyPerson_company(_ context.Context, fi
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -2543,6 +2671,10 @@ func (ec *executionContext) fieldContext_Mutation_createCompany(ctx context.Cont
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -2551,8 +2683,8 @@ func (ec *executionContext) fieldContext_Mutation_createCompany(ctx context.Cont
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -2683,7 +2815,7 @@ func (ec *executionContext) _Query_companiesByIdOrg(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CompaniesByIDOrg(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().CompaniesByIDOrg(rctx, fc.Args["ids"].([]*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2712,6 +2844,10 @@ func (ec *executionContext) fieldContext_Query_companiesByIdOrg(ctx context.Cont
 				return ec.fieldContext_Company_id(ctx, field)
 			case "orgID":
 				return ec.fieldContext_Company_orgID(ctx, field)
+			case "investorID":
+				return ec.fieldContext_Company_investorID(ctx, field)
+			case "companyID":
+				return ec.fieldContext_Company_companyID(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "website":
@@ -2720,8 +2856,8 @@ func (ec *executionContext) fieldContext_Query_companiesByIdOrg(ctx context.Cont
 				return ec.fieldContext_Company_profileUrl(ctx, field)
 			case "status":
 				return ec.fieldContext_Company_status(ctx, field)
-			case "locations":
-				return ec.fieldContext_Company_locations(ctx, field)
+			case "location":
+				return ec.fieldContext_Company_location(ctx, field)
 			case "fundingRounds":
 				return ec.fieldContext_Company_fundingRounds(ctx, field)
 			case "investments":
@@ -5143,6 +5279,16 @@ func (ec *executionContext) _Company(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "investorID":
+			out.Values[i] = ec._Company_investorID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "companyID":
+			out.Values[i] = ec._Company_companyID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "name":
 			out.Values[i] = ec._Company_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5163,8 +5309,8 @@ func (ec *executionContext) _Company(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "locations":
-			out.Values[i] = ec._Company_locations(ctx, field, obj)
+		case "location":
+			out.Values[i] = ec._Company_location(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -6115,42 +6261,14 @@ func (ec *executionContext) marshalNCompany2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmod
 	return ec._Company(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNCompanyLocation2ᚕᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐCompanyLocation(ctx context.Context, sel ast.SelectionSet, v []*model.CompanyLocation) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
+func (ec *executionContext) marshalNCompanyLocation2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐCompanyLocation(ctx context.Context, sel ast.SelectionSet, v *model.CompanyLocation) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
 	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOCompanyLocation2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐCompanyLocation(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
+	return ec._CompanyLocation(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {
@@ -6219,6 +6337,32 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNID2ᚕᚖstring(ctx context.Context, v any) ([]*string, error) {
+	var vSlice []any
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOID2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNID2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOID2ᚖstring(ctx, sel, v[i])
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v any) (int32, error) {
@@ -6631,18 +6775,27 @@ func (ec *executionContext) marshalOCompany2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmod
 	return ec._Company(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCompanyLocation2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐCompanyLocation(ctx context.Context, sel ast.SelectionSet, v *model.CompanyLocation) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._CompanyLocation(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOFundingRound2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐFundingRound(ctx context.Context, sel ast.SelectionSet, v *model.FundingRound) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._FundingRound(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v any) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalID(*v)
+	return res
 }
 
 func (ec *executionContext) marshalOInvestment2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐInvestment(ctx context.Context, sel ast.SelectionSet, v *model.Investment) graphql.Marshaler {

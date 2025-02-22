@@ -3,6 +3,10 @@ type Company {
     id: ID!
     # The organization ID of the company
     orgID: Int!
+    # The investor ID of the company
+    investorID: Int!
+    # The company ID of the company
+    companyID: Int!
     # The name of the company
     name: String!
     # The website of the company
@@ -11,8 +15,8 @@ type Company {
     profileUrl: String!
     # The status of the company
     status: String!
-    # The locations of the company
-    locations: [CompanyLocation]!
+    # The location of the company
+    location: CompanyLocation!
     # The funding rounds of the company
     fundingRounds: [FundingRound]!
     # The investments of the company

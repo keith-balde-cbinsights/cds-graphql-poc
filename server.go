@@ -3,6 +3,7 @@ package main
 import (
 	"cds-graphql-poc/graph"
 	"cds-graphql-poc/graph/resolvers"
+	"cds-graphql-poc/service/profileservice"
 	"log"
 	"net/http"
 	"os"
@@ -23,7 +24,11 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &resolvers.Resolver{}}))
+	rootResolver := &resolvers.Resolver{
+		ProfileServiceClient: profileservice.NewClient(),
+	}
+
+	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: rootResolver}))
 
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})

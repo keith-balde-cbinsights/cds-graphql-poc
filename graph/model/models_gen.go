@@ -7,18 +7,20 @@ import (
 )
 
 type Company struct {
-	ID            string             `json:"id"`
-	OrgID         int32              `json:"orgID"`
-	Name          string             `json:"name"`
-	Website       string             `json:"website"`
-	ProfileURL    string             `json:"profileUrl"`
-	Status        string             `json:"status"`
-	Locations     []*CompanyLocation `json:"locations"`
-	FundingRounds []*FundingRound    `json:"fundingRounds"`
-	Investments   []*Investment      `json:"investments"`
-	MarketCap     *NumericValue      `json:"marketCap"`
-	TotalRaised   *NumericValue      `json:"totalRaised"`
-	Ceo           *KeyPerson         `json:"ceo,omitempty"`
+	ID            string           `json:"id"`
+	OrgID         int32            `json:"orgID"`
+	InvestorID    int32            `json:"investorID"`
+	CompanyID     int32            `json:"companyID"`
+	Name          string           `json:"name"`
+	Website       string           `json:"website"`
+	ProfileURL    string           `json:"profileUrl"`
+	Status        string           `json:"status"`
+	Location      *CompanyLocation `json:"location"`
+	FundingRounds []*FundingRound  `json:"fundingRounds"`
+	Investments   []*Investment    `json:"investments"`
+	MarketCap     *NumericValue    `json:"marketCap"`
+	TotalRaised   *NumericValue    `json:"totalRaised"`
+	Ceo           *KeyPerson       `json:"ceo,omitempty"`
 }
 
 type CompanyLocation struct {
