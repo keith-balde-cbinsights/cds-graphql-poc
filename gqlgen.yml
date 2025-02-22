@@ -42,7 +42,7 @@ resolver:
 
   # Only for follow-schema layout:
   dir: graph/resolvers
-  filename_template: "{name}.resolvers.go"
+  filename_template: "{name}.resolver.go"
 
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
@@ -152,3 +152,16 @@ models:
     model:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
+
+  Company:
+    fields:
+      fundingRounds:
+        resolver: true
+      investments:
+        resolver: true
+      marketCap:
+        resolver: true
+      ceo:
+        resolver: true
+      totalRaised:
+        resolver: true

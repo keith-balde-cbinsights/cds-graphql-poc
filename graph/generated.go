@@ -40,6 +40,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Company() CompanyResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -125,6 +126,13 @@ type ComplexityRoot struct {
 	}
 }
 
+type CompanyResolver interface {
+	FundingRounds(ctx context.Context, obj *model.Company) ([]*model.FundingRound, error)
+	Investments(ctx context.Context, obj *model.Company) ([]*model.Investment, error)
+	MarketCap(ctx context.Context, obj *model.Company) (*model.NumericValue, error)
+	TotalRaised(ctx context.Context, obj *model.Company) (*model.NumericValue, error)
+	Ceo(ctx context.Context, obj *model.Company) (*model.KeyPerson, error)
+}
 type MutationResolver interface {
 	CreateCompany(ctx context.Context, input model.NewCompany) (*model.Company, error)
 }
@@ -1200,7 +1208,7 @@ func (ec *executionContext) _Company_fundingRounds(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.FundingRounds, nil
+		return ec.resolvers.Company().FundingRounds(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1221,8 +1229,8 @@ func (ec *executionContext) fieldContext_Company_fundingRounds(_ context.Context
 	fc = &graphql.FieldContext{
 		Object:     "Company",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -1262,7 +1270,7 @@ func (ec *executionContext) _Company_investments(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Investments, nil
+		return ec.resolvers.Company().Investments(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1283,8 +1291,8 @@ func (ec *executionContext) fieldContext_Company_investments(_ context.Context, 
 	fc = &graphql.FieldContext{
 		Object:     "Company",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -1322,7 +1330,7 @@ func (ec *executionContext) _Company_marketCap(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MarketCap, nil
+		return ec.resolvers.Company().MarketCap(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1343,8 +1351,8 @@ func (ec *executionContext) fieldContext_Company_marketCap(_ context.Context, fi
 	fc = &graphql.FieldContext{
 		Object:     "Company",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "raw":
@@ -1372,7 +1380,7 @@ func (ec *executionContext) _Company_totalRaised(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TotalRaised, nil
+		return ec.resolvers.Company().TotalRaised(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1393,8 +1401,8 @@ func (ec *executionContext) fieldContext_Company_totalRaised(_ context.Context, 
 	fc = &graphql.FieldContext{
 		Object:     "Company",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "raw":
@@ -1422,7 +1430,7 @@ func (ec *executionContext) _Company_ceo(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Ceo, nil
+		return ec.resolvers.Company().Ceo(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1440,8 +1448,8 @@ func (ec *executionContext) fieldContext_Company_ceo(_ context.Context, field gr
 	fc = &graphql.FieldContext{
 		Object:     "Company",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -5272,70 +5280,225 @@ func (ec *executionContext) _Company(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Company_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "orgID":
 			out.Values[i] = ec._Company_orgID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "investorID":
 			out.Values[i] = ec._Company_investorID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "companyID":
 			out.Values[i] = ec._Company_companyID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Company_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "website":
 			out.Values[i] = ec._Company_website(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "profileUrl":
 			out.Values[i] = ec._Company_profileUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "status":
 			out.Values[i] = ec._Company_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "location":
 			out.Values[i] = ec._Company_location(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "fundingRounds":
-			out.Values[i] = ec._Company_fundingRounds(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Company_fundingRounds(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "investments":
-			out.Values[i] = ec._Company_investments(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Company_investments(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "marketCap":
-			out.Values[i] = ec._Company_marketCap(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Company_marketCap(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "totalRaised":
-			out.Values[i] = ec._Company_totalRaised(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Company_totalRaised(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "ceo":
-			out.Values[i] = ec._Company_ceo(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Company_ceo(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6421,6 +6584,10 @@ func (ec *executionContext) marshalNInvestment2ᚕᚖcdsᚑgraphqlᚑpocᚋgraph
 func (ec *executionContext) unmarshalNNewCompany2cdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNewCompany(ctx context.Context, v any) (model.NewCompany, error) {
 	res, err := ec.unmarshalInputNewCompany(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNNumericValue2cdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx context.Context, sel ast.SelectionSet, v model.NumericValue) graphql.Marshaler {
+	return ec._NumericValue(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx context.Context, sel ast.SelectionSet, v *model.NumericValue) graphql.Marshaler {
