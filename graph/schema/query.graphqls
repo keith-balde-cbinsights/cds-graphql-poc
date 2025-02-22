@@ -1,0 +1,3 @@
+type Query {
+  companiesByIdOrg(id: ID!): [Company]!
+}

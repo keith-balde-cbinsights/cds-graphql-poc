@@ -1,0 +1,10 @@
+type KeyPerson {
+    # The ID of the key person
+    id: ID!
+    # The name of the key person
+    name: String!
+    # The title of the key person
+    title: String!
+    # The company that the key person works at
+    company: Company!
+}

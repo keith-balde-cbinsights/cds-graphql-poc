@@ -1,0 +1,8 @@
+type Mutation {
+  createCompany(input: NewCompany!): Company!
+}
+
+input NewCompany {
+  name: String!
+  orgId: ID!
+}

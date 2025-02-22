@@ -1,0 +1,81 @@
+type Company {
+    # The ID of the company
+    id: ID!
+    # The organization ID of the company
+    orgID: Int!
+    # The name of the company
+    name: String!
+    # The website of the company
+    website: String!
+    # The profile URL of the company
+    profileUrl: String!
+    # The status of the company
+    status: String!
+    # The locations of the company
+    locations: [CompanyLocation]!
+    # The funding rounds of the company
+    fundingRounds: [FundingRound]!
+    # The investments of the company
+    investments: [Investment]!
+    # The market cap of the company
+    marketCap: NumericValue!
+    # The total amount of money raised by the company
+    totalRaised: NumericValue!
+    # The CEO of the company
+    ceo: KeyPerson
+}
+
+type CompanyLocation {
+    # The city of the location
+    city: String!
+    # The state of the location
+    state: String!
+    # The country of the location
+    country: String!
+}
+
+type Investment {
+    # The ID of the investment
+    id: ID!
+    # The name of the investment round
+    roundName: String!
+    # The date of the investment
+    date: Time!
+    # The amount of money invested
+    amount: NumericValue!
+    # The max valuation of the company after the investment
+    valuation: NumericValue!
+    # The company that received the investment
+    receiver: Company!
+    # The company that invested in the company
+    investor: Company!
+}
+
+type FundingRound {
+    # The ID of the funding round
+    id: ID!
+    roundName: String!
+    # The date of the funding round
+    date: Time!
+    # The amount of money raised
+    amount: NumericValue!
+    # The max valuation of the company after the funding round
+    valuation: NumericValue!
+    # The company that received the funding
+    receiver: Company!
+    # The lead investor in the funding round    
+    leadInvestor: Company
+    # The other investors in the funding round
+    otherInvestors: [Company]!
+}
+
+type Summary {
+    # The headline of the summary
+    headline: String!
+    # The basics of the summary
+    basics: String!
+    # The details of the summary
+    details: [String]!
+    # The sources of the summary
+    sources: [String]!
+}

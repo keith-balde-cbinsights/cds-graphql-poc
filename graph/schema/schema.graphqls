@@ -1,0 +1,10 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar Time
+
+type Schema {
+  query: Query
+  mutation: Mutation
+}
