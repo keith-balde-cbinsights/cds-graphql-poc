@@ -3,7 +3,7 @@ package main
 import (
 	"cds-graphql-poc/graph"
 	"cds-graphql-poc/graph/resolvers"
-	"cds-graphql-poc/service/profileservice"
+	"cds-graphql-poc/service"
 	"log"
 	"net/http"
 	"os"
@@ -25,7 +25,7 @@ func main() {
 	}
 
 	rootResolver := &resolvers.Resolver{
-		ProfileServiceClient: profileservice.NewClient(),
+		CompanyService: service.NewCompanyService(),
 	}
 
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: rootResolver}))

@@ -3,6 +3,7 @@ package profileservice
 import (
 	r "cds-graphql-poc/example/response"
 	"context"
+	"fmt"
 )
 
 type Client interface {
@@ -36,6 +37,8 @@ func (c *client) GetProfilesById(
 	ctx context.Context,
 	ids []int,
 ) ([]*r.GetProfileResponse, error) {
+	fmt.Printf("Fetching profiles by ids: %v\n", ids)
+
 	profiles := []*r.GetProfileResponse{}
 
 	for _, id := range ids {
