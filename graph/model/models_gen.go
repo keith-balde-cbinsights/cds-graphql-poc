@@ -40,16 +40,6 @@ type FundingRound struct {
 	OtherInvestors []*Company `json:"otherInvestors"`
 }
 
-type Investment struct {
-	ID        string    `json:"id"`
-	RoundName string    `json:"roundName"`
-	Date      time.Time `json:"date"`
-	Amount    float64   `json:"amount"`
-	Valuation float64   `json:"valuation"`
-	Receiver  *Company  `json:"receiver"`
-	Investor  *Company  `json:"investor"`
-}
-
 type KeyPerson struct {
 	ID      string   `json:"id"`
 	Name    string   `json:"name"`

@@ -41,6 +41,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Company() CompanyResolver
+	Investment() InvestmentResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -127,6 +128,9 @@ type CompanyResolver interface {
 	MarketCap(ctx context.Context, obj *model.Company) (float64, error)
 	TotalRaised(ctx context.Context, obj *model.Company) (float64, error)
 	Ceo(ctx context.Context, obj *model.Company) (*model.KeyPerson, error)
+}
+type InvestmentResolver interface {
+	Receiver(ctx context.Context, obj *model.Investment) (*model.Company, error)
 }
 type MutationResolver interface {
 	CreateCompany(ctx context.Context, input model.NewCompany) (*model.Company, error)
@@ -2240,7 +2244,7 @@ func (ec *executionContext) _Investment_receiver(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Receiver, nil
+		return ec.resolvers.Investment().Receiver(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2261,8 +2265,8 @@ func (ec *executionContext) fieldContext_Investment_receiver(_ context.Context, 
 	fc = &graphql.FieldContext{
 		Object:     "Investment",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -5512,37 +5516,68 @@ func (ec *executionContext) _Investment(ctx context.Context, sel ast.SelectionSe
 		case "id":
 			out.Values[i] = ec._Investment_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "roundName":
 			out.Values[i] = ec._Investment_roundName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "date":
 			out.Values[i] = ec._Investment_date(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "amount":
 			out.Values[i] = ec._Investment_amount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "valuation":
 			out.Values[i] = ec._Investment_valuation(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "receiver":
-			out.Values[i] = ec._Investment_receiver(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Investment_receiver(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "investor":
 			out.Values[i] = ec._Investment_investor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
