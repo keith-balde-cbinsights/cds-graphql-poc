@@ -1,5 +1,7 @@
 package response
 
+import "time"
+
 type GetProfileResponse struct {
 	IdCbiEntity int
 	IdCompany   int
@@ -15,6 +17,19 @@ type GetSummaryKPIsResponse struct {
 	Ceo          *KeyPerson
 	MarketCap    float64
 	TotalFunding float64
+}
+
+type GetInvestmentsResponse struct {
+	Investments []*Investment
+}
+
+type Investment struct {
+	Id            int
+	RoundName     string
+	Date          time.Time
+	Amount        float64
+	Valuation     float64
+	InvestedIdOrg int
 }
 
 type KeyPerson struct {
@@ -34,6 +49,7 @@ type Address struct {
 
 var Profiles = map[int]*GetProfileResponse{}
 var SummaryKPIs = map[int]*GetSummaryKPIsResponse{}
+var Investments = map[int]*GetInvestmentsResponse{}
 
 func PopulateProfilesMap() {
 	Profiles[1] = &GetProfileResponse{
@@ -109,6 +125,53 @@ func PopulateSummaryKPIs() {
 			Id:       3,
 			FullName: "Mark Zuckerberg",
 			Title:    "Chief Executive Officer",
+		},
+	}
+}
+
+func PopulateInvestments() {
+	Investments[1] = &GetInvestmentsResponse{
+		Investments: []*Investment{
+			{
+				Id:            1,
+				RoundName:     "Series A",
+				Date:          time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
+				Amount:        1000000,
+				Valuation:     10000000,
+				InvestedIdOrg: 1,
+			},
+			{
+				Id:            2,
+				RoundName:     "Series B",
+				Date:          time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+				Amount:        2000000,
+				Valuation:     20000000,
+				InvestedIdOrg: 1,
+			},
+		},
+	}
+	Investments[2] = &GetInvestmentsResponse{
+		Investments: []*Investment{
+			{
+				Id:            3,
+				RoundName:     "Series C",
+				Date:          time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				Amount:        3000000,
+				Valuation:     30000000,
+				InvestedIdOrg: 2,
+			},
+		},
+	}
+	Investments[3] = &GetInvestmentsResponse{
+		Investments: []*Investment{
+			{
+				Id:            4,
+				RoundName:     "Series D",
+				Date:          time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+				Amount:        4000000,
+				Valuation:     40000000,
+				InvestedIdOrg: 3,
+			},
 		},
 	}
 }

@@ -34,3 +34,17 @@ func GetSummaryKPIs(ctx context.Context, ids []int) ([]*dto.KPISummary, error) {
 
 	return loaders.SummaryKPILoader.LoadAll(ctx, ids)
 }
+
+func GetInvestmentsForCompany(ctx context.Context, id int) ([]*model.Investment, error) {
+	fmt.Println("Using loader GetInvestmentsForCompany", id)
+	loaders := For(ctx)
+
+	return loaders.InvestmentLoader.Load(ctx, id)
+}
+
+func GetInvestmentsForCompanies(ctx context.Context, ids []int) ([][]*model.Investment, error) {
+	fmt.Println("Using loader GetInvestmentsForCompanies", ids)
+	loaders := For(ctx)
+
+	return loaders.InvestmentLoader.LoadAll(ctx, ids)
+}

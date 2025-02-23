@@ -19,7 +19,12 @@ func (r *companyResolver) FundingRounds(ctx context.Context, obj *model.Company)
 
 // Investments is the resolver for the investments field.
 func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) ([]*model.Investment, error) {
-	panic(fmt.Errorf("not implemented: Investments - investments"))
+	investments, err := l.GetInvestmentsForCompany(ctx, int(obj.OrgID))
+	if err != nil {
+		return nil, err
+	}
+
+	return investments, nil
 }
 
 // MarketCap is the resolver for the marketCap field.

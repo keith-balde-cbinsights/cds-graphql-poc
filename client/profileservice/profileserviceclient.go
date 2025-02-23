@@ -19,6 +19,10 @@ type Client interface {
 		ctx context.Context,
 		ids []int,
 	) ([]*r.GetSummaryKPIsResponse, error)
+	GetInvestments(
+		ctx context.Context,
+		ids []int,
+	) ([]*r.GetInvestmentsResponse, error)
 }
 
 type client struct {
@@ -27,6 +31,7 @@ type client struct {
 func NewClient() *client {
 	r.PopulateProfilesMap()
 	r.PopulateSummaryKPIs()
+	r.PopulateInvestments()
 
 	return &client{}
 }
@@ -66,4 +71,19 @@ func (c *client) GetSummaryKPIForCompanies(
 	}
 
 	return summaryKPIs, nil
+}
+
+func (c *client) GetInvestments(
+	ctx context.Context,
+	ids []int,
+) ([]*r.GetInvestmentsResponse, error) {
+	fmt.Printf("Fetching investments for companies: %v\n", ids)
+
+	investments := []*r.GetInvestmentsResponse{}
+
+	for _, id := range ids {
+		investments = append(investments, r.Investments[id])
+	}
+
+	return investments, nil
 }

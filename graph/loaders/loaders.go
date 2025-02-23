@@ -20,6 +20,7 @@ const (
 type Loaders struct {
 	CompanyLoader    *dataloadgen.Loader[*string, *model.Company]
 	SummaryKPILoader *dataloadgen.Loader[int, *dto.KPISummary]
+	InvestmentLoader *dataloadgen.Loader[int, []*model.Investment]
 }
 
 // NewLoaders instantiates data loaders for the middleware
@@ -27,6 +28,7 @@ func NewLoaders(companyService service.CompanyService) *Loaders {
 	return &Loaders{
 		CompanyLoader:    dataloadgen.NewLoader(companyService.GetCompaniesById),
 		SummaryKPILoader: dataloadgen.NewLoader(companyService.GetSummaryKPIForCompanies),
+		InvestmentLoader: dataloadgen.NewLoader(companyService.GetInvestments),
 	}
 }
 

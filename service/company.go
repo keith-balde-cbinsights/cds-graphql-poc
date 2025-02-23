@@ -13,6 +13,7 @@ import (
 type CompanyService interface {
 	GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error)
 	GetSummaryKPIForCompanies(ctx context.Context, ids []int) ([]*dto.KPISummary, []error)
+	GetInvestments(ctx context.Context, ids []int) ([][]*model.Investment, []error)
 }
 
 type companyService struct {
@@ -103,4 +104,31 @@ func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []in
 	}
 
 	return summaryKPIsDTO, nil
+}
+
+func (s *companyService) GetInvestments(ctx context.Context, ids []int) ([][]*model.Investment, []error) {
+	companies, err := s.profileServiceClient.GetInvestments(ctx, ids)
+
+	if err != nil {
+		return nil, []error{fmt.Errorf("error getting investments: %v", err)}
+	}
+
+	result := [][]*model.Investment{}
+
+	for _, company := range companies {
+		resultItem := []*model.Investment{}
+		for _, investment := range company.Investments {
+			resultItem = append(resultItem, &model.Investment{
+				ID:        strconv.Itoa(investment.Id),
+				RoundName: investment.RoundName,
+				Date:      investment.Date,
+				Amount:    investment.Amount,
+				Valuation: investment.Valuation,
+			})
+		}
+
+		result = append(result, resultItem)
+	}
+
+	return result, nil
 }
