@@ -18,8 +18,8 @@ type Company struct {
 	Location      *CompanyLocation `json:"location"`
 	FundingRounds []*FundingRound  `json:"fundingRounds"`
 	Investments   []*Investment    `json:"investments"`
-	MarketCap     *NumericValue    `json:"marketCap"`
-	TotalRaised   *NumericValue    `json:"totalRaised"`
+	MarketCap     float64          `json:"marketCap"`
+	TotalRaised   float64          `json:"totalRaised"`
 	Ceo           *KeyPerson       `json:"ceo,omitempty"`
 }
 
@@ -30,24 +30,24 @@ type CompanyLocation struct {
 }
 
 type FundingRound struct {
-	ID             string        `json:"id"`
-	RoundName      string        `json:"roundName"`
-	Date           time.Time     `json:"date"`
-	Amount         *NumericValue `json:"amount"`
-	Valuation      *NumericValue `json:"valuation"`
-	Receiver       *Company      `json:"receiver"`
-	LeadInvestor   *Company      `json:"leadInvestor,omitempty"`
-	OtherInvestors []*Company    `json:"otherInvestors"`
+	ID             string     `json:"id"`
+	RoundName      string     `json:"roundName"`
+	Date           time.Time  `json:"date"`
+	Amount         float64    `json:"amount"`
+	Valuation      float64    `json:"valuation"`
+	Receiver       *Company   `json:"receiver"`
+	LeadInvestor   *Company   `json:"leadInvestor,omitempty"`
+	OtherInvestors []*Company `json:"otherInvestors"`
 }
 
 type Investment struct {
-	ID        string        `json:"id"`
-	RoundName string        `json:"roundName"`
-	Date      time.Time     `json:"date"`
-	Amount    *NumericValue `json:"amount"`
-	Valuation *NumericValue `json:"valuation"`
-	Receiver  *Company      `json:"receiver"`
-	Investor  *Company      `json:"investor"`
+	ID        string    `json:"id"`
+	RoundName string    `json:"roundName"`
+	Date      time.Time `json:"date"`
+	Amount    float64   `json:"amount"`
+	Valuation float64   `json:"valuation"`
+	Receiver  *Company  `json:"receiver"`
+	Investor  *Company  `json:"investor"`
 }
 
 type KeyPerson struct {
@@ -63,11 +63,6 @@ type Mutation struct {
 type NewCompany struct {
 	Name  string `json:"name"`
 	OrgID string `json:"orgId"`
-}
-
-type NumericValue struct {
-	Raw     float64 `json:"raw"`
-	Display string  `json:"display"`
 }
 
 type Query struct {

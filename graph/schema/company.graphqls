@@ -22,9 +22,9 @@ type Company {
     # The investments of the company
     investments: [Investment]!
     # The market cap of the company
-    marketCap: NumericValue!
+    marketCap: Float!
     # The total amount of money raised by the company
-    totalRaised: NumericValue!
+    totalRaised: Float!
     # The CEO of the company
     ceo: KeyPerson
 }
@@ -46,9 +46,9 @@ type Investment {
     # The date of the investment
     date: Time!
     # The amount of money invested
-    amount: NumericValue!
+    amount: Float!
     # The max valuation of the company after the investment
-    valuation: NumericValue!
+    valuation: Float!
     # The company that received the investment
     receiver: Company!
     # The company that invested in the company
@@ -62,9 +62,9 @@ type FundingRound {
     # The date of the funding round
     date: Time!
     # The amount of money raised
-    amount: NumericValue!
+    amount: Float!
     # The max valuation of the company after the funding round
-    valuation: NumericValue!
+    valuation: Float!
     # The company that received the funding
     receiver: Company!
     # The lead investor in the funding round    

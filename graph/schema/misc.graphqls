@@ -1,4 +1,0 @@
-type NumericValue {
-    raw: Float!
-    display: String!
-}
