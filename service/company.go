@@ -2,6 +2,7 @@ package service
 
 import (
 	"cds-graphql-poc/client/profileservice"
+	"cds-graphql-poc/dto"
 	"cds-graphql-poc/graph/model"
 	"cds-graphql-poc/graph/utils"
 	"context"
