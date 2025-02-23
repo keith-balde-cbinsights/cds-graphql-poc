@@ -2,6 +2,7 @@ package main
 
 import (
 	"cds-graphql-poc/graph"
+	"cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/resolvers"
 	"cds-graphql-poc/service"
 	"log"
@@ -24,22 +25,26 @@ func main() {
 		port = defaultPort
 	}
 
+	companyService := service.NewCompanyService()
+
 	rootResolver := &resolvers.Resolver{
-		CompanyService: service.NewCompanyService(),
+		CompanyService: companyService,
 	}
 
-	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: rootResolver}))
+	h := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: rootResolver}))
 
-	srv.AddTransport(transport.Options{})
-	srv.AddTransport(transport.GET{})
-	srv.AddTransport(transport.POST{})
+	h.AddTransport(transport.Options{})
+	h.AddTransport(transport.GET{})
+	h.AddTransport(transport.POST{})
 
-	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
+	h.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 
-	srv.Use(extension.Introspection{})
-	srv.Use(extension.AutomaticPersistedQuery{
+	h.Use(extension.Introspection{})
+	h.Use(extension.AutomaticPersistedQuery{
 		Cache: lru.New[string](100),
 	})
+
+	srv := loaders.Middleware(companyService, h)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
