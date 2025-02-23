@@ -15,6 +15,10 @@ type Client interface {
 		ctx context.Context,
 		ids []int,
 	) ([]*r.GetProfileResponse, error)
+	GetSummaryKPIForCompanies(
+		ctx context.Context,
+		ids []int,
+	) ([]*r.GetSummaryKPIsResponse, error)
 }
 
 type client struct {
@@ -22,6 +26,7 @@ type client struct {
 
 func NewClient() *client {
 	r.PopulateProfilesMap()
+	r.PopulateSummaryKPIs()
 
 	return &client{}
 }
@@ -46,4 +51,19 @@ func (c *client) GetProfilesById(
 	}
 
 	return profiles, nil
+}
+
+func (c *client) GetSummaryKPIForCompanies(
+	ctx context.Context,
+	ids []int,
+) ([]*r.GetSummaryKPIsResponse, error) {
+	fmt.Printf("Fetching summary KPIs for companies: %v\n", ids)
+
+	summaryKPIs := []*r.GetSummaryKPIsResponse{}
+
+	for _, id := range ids {
+		summaryKPIs = append(summaryKPIs, r.SummaryKPIs[id])
+	}
+
+	return summaryKPIs, nil
 }

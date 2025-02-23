@@ -10,6 +10,18 @@ type GetProfileResponse struct {
 	Address     *Address
 }
 
+type GetSummaryKPIsResponse struct {
+	IdCompany int
+	Ceo       *KeyPerson
+	MarketCap float64
+}
+
+type KeyPerson struct {
+	Id       int
+	FullName string
+	Title    string
+}
+
 type Address struct {
 	Street1 string
 	Street2 string
@@ -20,6 +32,7 @@ type Address struct {
 }
 
 var Profiles = map[int]*GetProfileResponse{}
+var SummaryKPIs = map[int]*GetSummaryKPIsResponse{}
 
 func PopulateProfilesMap() {
 	Profiles[1] = &GetProfileResponse{
@@ -56,8 +69,8 @@ func PopulateProfilesMap() {
 		IdCompany:   3,
 		IdInvestor:  3,
 		IdCbiEntity: 3,
-		Name:        "Facebook",
-		Url:         "https://www.facebook.com",
+		Name:        "Meta",
+		Url:         "https://www.meta.com",
 		Status:      "ACTIVE",
 		Address: &Address{
 			Street1: "1 Hacker Way",
@@ -65,6 +78,33 @@ func PopulateProfilesMap() {
 			State:   "CA",
 			Zip:     "94025",
 			Country: "USA",
+		},
+	}
+}
+
+func PopulateSummaryKPIs() {
+	SummaryKPIs[1] = &GetSummaryKPIsResponse{
+		MarketCap: 1000,
+		Ceo: &KeyPerson{
+			Id:       1,
+			FullName: "Manlio Carrelli",
+			Title:    "Chief Executive Officer",
+		},
+	}
+	SummaryKPIs[2] = &GetSummaryKPIsResponse{
+		MarketCap: 1500,
+		Ceo: &KeyPerson{
+			Id:       2,
+			FullName: "Sundar Pichai",
+			Title:    "CEO",
+		},
+	}
+	SummaryKPIs[3] = &GetSummaryKPIsResponse{
+		MarketCap: 800,
+		Ceo: &KeyPerson{
+			Id:       3,
+			FullName: "Mark Zuckerberg",
+			Title:    "Chief Executive Officer",
 		},
 	}
 }

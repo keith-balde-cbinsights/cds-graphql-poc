@@ -76,3 +76,32 @@ func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([
 
 	return companies, nil
 }
+
+func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []string) ([]*dto.KPISummary, error) {
+	intIds := []int{}
+	for _, id := range ids {
+		newId, err := strconv.Atoi(id)
+
+		if err != nil {
+			return nil, fmt.Errorf("error converting id to int: %v", err)
+		}
+
+		intIds = append(intIds, newId)
+	}
+
+	summaryKPIs, err := s.profileServiceClient.GetSummaryKPIForCompanies(ctx, intIds)
+
+	if err != nil {
+		return nil, fmt.Errorf("error getting summary KPIs for companies: %v", err)
+	}
+
+	summaryKPIsDTO := []*dto.KPISummary{}
+
+	for _, summaryKPI := range summaryKPIs {
+		summaryKPIsDTO = append(summaryKPIsDTO, &dto.KPISummary{
+			MarketCap: summaryKPI.MarketCap,
+		})
+	}
+
+	return summaryKPIsDTO, nil
+}
