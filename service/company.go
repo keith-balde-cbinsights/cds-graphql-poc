@@ -11,7 +11,7 @@ import (
 )
 
 type CompanyService interface {
-	GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, error)
+	GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error)
 	GetSummaryKPIForCompanies(ctx context.Context, ids []string) ([]*dto.KPISummary, []error)
 }
 
@@ -25,13 +25,13 @@ func NewCompanyService() *companyService {
 	}
 }
 
-func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, error) {
+func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error) {
 	intIds := []int{}
 	for _, id := range ids {
 		newId, err := strconv.Atoi(*id)
 
 		if err != nil {
-			return nil, fmt.Errorf("error converting id to int: %v", err)
+			return nil, []error{fmt.Errorf("error converting id to int: %v", err)}
 		}
 
 		intIds = append(intIds, newId)
@@ -40,7 +40,7 @@ func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([
 	profiles, err := s.profileServiceClient.GetProfilesById(ctx, intIds)
 
 	if err != nil {
-		return nil, fmt.Errorf("error getting profiles by id: %v", err)
+		return nil, []error{fmt.Errorf("error getting profiles by id: %v", err)}
 	}
 
 	companies := []*model.Company{}
@@ -50,7 +50,7 @@ func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([
 		profileURL, err := utils.GenerateProfileURL(profile.IdCbiEntity)
 
 		if err != nil {
-			return nil, fmt.Errorf("error generating profile URL: %v", err)
+			return nil, []error{fmt.Errorf("error generating profile URL: %v", err)}
 		}
 
 		location := &model.CompanyLocation{}
