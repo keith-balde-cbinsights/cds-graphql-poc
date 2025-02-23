@@ -96,8 +96,9 @@ func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []in
 		}
 
 		summaryKPIsDTO = append(summaryKPIsDTO, &dto.KPISummary{
-			MarketCap: summaryKPI.MarketCap,
-			Ceo:       ceo,
+			MarketCap:    summaryKPI.MarketCap,
+			TotalFunding: summaryKPI.TotalFunding,
+			Ceo:          ceo,
 		})
 	}
 

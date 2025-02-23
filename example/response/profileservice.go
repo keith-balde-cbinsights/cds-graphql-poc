@@ -11,9 +11,10 @@ type GetProfileResponse struct {
 }
 
 type GetSummaryKPIsResponse struct {
-	IdCompany int
-	Ceo       *KeyPerson
-	MarketCap float64
+	IdCompany    int
+	Ceo          *KeyPerson
+	MarketCap    float64
+	TotalFunding float64
 }
 
 type KeyPerson struct {
@@ -84,7 +85,8 @@ func PopulateProfilesMap() {
 
 func PopulateSummaryKPIs() {
 	SummaryKPIs[1] = &GetSummaryKPIsResponse{
-		MarketCap: 1000,
+		MarketCap:    1000,
+		TotalFunding: 9999,
 		Ceo: &KeyPerson{
 			Id:       1,
 			FullName: "Manlio Carrelli",
@@ -92,7 +94,8 @@ func PopulateSummaryKPIs() {
 		},
 	}
 	SummaryKPIs[2] = &GetSummaryKPIsResponse{
-		MarketCap: 1500,
+		MarketCap:    1500,
+		TotalFunding: 8888,
 		Ceo: &KeyPerson{
 			Id:       2,
 			FullName: "Sundar Pichai",
@@ -100,7 +103,8 @@ func PopulateSummaryKPIs() {
 		},
 	}
 	SummaryKPIs[3] = &GetSummaryKPIsResponse{
-		MarketCap: 800,
+		MarketCap:    800,
+		TotalFunding: 5555,
 		Ceo: &KeyPerson{
 			Id:       3,
 			FullName: "Mark Zuckerberg",

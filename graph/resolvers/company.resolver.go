@@ -34,7 +34,12 @@ func (r *companyResolver) MarketCap(ctx context.Context, obj *model.Company) (fl
 
 // TotalRaised is the resolver for the totalRaised field.
 func (r *companyResolver) TotalRaised(ctx context.Context, obj *model.Company) (float64, error) {
-	panic(fmt.Errorf("not implemented: TotalRaised - totalRaised"))
+	kpiSummary, err := l.GetSummaryKPI(ctx, int(obj.OrgID))
+	if err != nil {
+		return 0, err
+	}
+
+	return kpiSummary.TotalFunding, nil
 }
 
 // Ceo is the resolver for the ceo field.
