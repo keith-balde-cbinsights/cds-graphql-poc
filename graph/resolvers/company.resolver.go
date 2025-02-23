@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"cds-graphql-poc/graph"
+	l "cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/model"
 	"context"
 	"fmt"
@@ -22,18 +23,33 @@ func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) (
 }
 
 // MarketCap is the resolver for the marketCap field.
-func (r *companyResolver) MarketCap(ctx context.Context, obj *model.Company) (*model.NumericValue, error) {
-	panic(fmt.Errorf("not implemented: MarketCap - marketCap"))
+func (r *companyResolver) MarketCap(ctx context.Context, obj *model.Company) (float64, error) {
+	kpiSummary, err := l.GetSummaryKPI(ctx, int(obj.OrgID))
+	if err != nil {
+		return 0, err
+	}
+
+	return kpiSummary.MarketCap, nil
 }
 
 // TotalRaised is the resolver for the totalRaised field.
-func (r *companyResolver) TotalRaised(ctx context.Context, obj *model.Company) (*model.NumericValue, error) {
+func (r *companyResolver) TotalRaised(ctx context.Context, obj *model.Company) (float64, error) {
 	panic(fmt.Errorf("not implemented: TotalRaised - totalRaised"))
 }
 
 // Ceo is the resolver for the ceo field.
 func (r *companyResolver) Ceo(ctx context.Context, obj *model.Company) (*model.KeyPerson, error) {
-	panic(fmt.Errorf("not implemented: Ceo - ceo"))
+	kpiSummary, err := l.GetSummaryKPI(ctx, int(obj.OrgID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.KeyPerson{
+		ID:      fmt.Sprintf("%d", kpiSummary.Ceo.Id),
+		Name:    kpiSummary.Ceo.FullName,
+		Title:   kpiSummary.Ceo.Title,
+		Company: obj,
+	}, nil
 }
 
 // Company returns graph.CompanyResolver implementation.

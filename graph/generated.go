@@ -104,11 +104,6 @@ type ComplexityRoot struct {
 		CreateCompany func(childComplexity int, input model.NewCompany) int
 	}
 
-	NumericValue struct {
-		Display func(childComplexity int) int
-		Raw     func(childComplexity int) int
-	}
-
 	Query struct {
 		CompaniesByIDOrg func(childComplexity int, ids []*string) int
 	}
@@ -129,8 +124,8 @@ type ComplexityRoot struct {
 type CompanyResolver interface {
 	FundingRounds(ctx context.Context, obj *model.Company) ([]*model.FundingRound, error)
 	Investments(ctx context.Context, obj *model.Company) ([]*model.Investment, error)
-	MarketCap(ctx context.Context, obj *model.Company) (*model.NumericValue, error)
-	TotalRaised(ctx context.Context, obj *model.Company) (*model.NumericValue, error)
+	MarketCap(ctx context.Context, obj *model.Company) (float64, error)
+	TotalRaised(ctx context.Context, obj *model.Company) (float64, error)
 	Ceo(ctx context.Context, obj *model.Company) (*model.KeyPerson, error)
 }
 type MutationResolver interface {
@@ -423,20 +418,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateCompany(childComplexity, args["input"].(model.NewCompany)), true
 
-	case "NumericValue.display":
-		if e.complexity.NumericValue.Display == nil {
-			break
-		}
-
-		return e.complexity.NumericValue.Display(childComplexity), true
-
-	case "NumericValue.raw":
-		if e.complexity.NumericValue.Raw == nil {
-			break
-		}
-
-		return e.complexity.NumericValue.Raw(childComplexity), true
-
 	case "Query.companiesByIdOrg":
 		if e.complexity.Query.CompaniesByIDOrg == nil {
 			break
@@ -596,7 +577,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
-//go:embed "schema/company.graphqls" "schema/keyperson.graphqls" "schema/misc.graphqls" "schema/mutation.graphqls" "schema/query.graphqls" "schema/schema.graphqls"
+//go:embed "schema/company.graphqls" "schema/keyperson.graphqls" "schema/mutation.graphqls" "schema/query.graphqls" "schema/schema.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -610,7 +591,6 @@ func sourceData(filename string) string {
 var sources = []*ast.Source{
 	{Name: "schema/company.graphqls", Input: sourceData("schema/company.graphqls"), BuiltIn: false},
 	{Name: "schema/keyperson.graphqls", Input: sourceData("schema/keyperson.graphqls"), BuiltIn: false},
-	{Name: "schema/misc.graphqls", Input: sourceData("schema/misc.graphqls"), BuiltIn: false},
 	{Name: "schema/mutation.graphqls", Input: sourceData("schema/mutation.graphqls"), BuiltIn: false},
 	{Name: "schema/query.graphqls", Input: sourceData("schema/query.graphqls"), BuiltIn: false},
 	{Name: "schema/schema.graphqls", Input: sourceData("schema/schema.graphqls"), BuiltIn: false},
@@ -1342,9 +1322,9 @@ func (ec *executionContext) _Company_marketCap(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NumericValue)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Company_marketCap(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1354,13 +1334,7 @@ func (ec *executionContext) fieldContext_Company_marketCap(_ context.Context, fi
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "raw":
-				return ec.fieldContext_NumericValue_raw(ctx, field)
-			case "display":
-				return ec.fieldContext_NumericValue_display(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NumericValue", field.Name)
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1392,9 +1366,9 @@ func (ec *executionContext) _Company_totalRaised(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NumericValue)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Company_totalRaised(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1404,13 +1378,7 @@ func (ec *executionContext) fieldContext_Company_totalRaised(_ context.Context, 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "raw":
-				return ec.fieldContext_NumericValue_raw(ctx, field)
-			case "display":
-				return ec.fieldContext_NumericValue_display(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NumericValue", field.Name)
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1757,9 +1725,9 @@ func (ec *executionContext) _FundingRound_amount(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NumericValue)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FundingRound_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1769,13 +1737,7 @@ func (ec *executionContext) fieldContext_FundingRound_amount(_ context.Context, 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "raw":
-				return ec.fieldContext_NumericValue_raw(ctx, field)
-			case "display":
-				return ec.fieldContext_NumericValue_display(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NumericValue", field.Name)
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1807,9 +1769,9 @@ func (ec *executionContext) _FundingRound_valuation(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NumericValue)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_FundingRound_valuation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1819,13 +1781,7 @@ func (ec *executionContext) fieldContext_FundingRound_valuation(_ context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "raw":
-				return ec.fieldContext_NumericValue_raw(ctx, field)
-			case "display":
-				return ec.fieldContext_NumericValue_display(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NumericValue", field.Name)
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2208,9 +2164,9 @@ func (ec *executionContext) _Investment_amount(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NumericValue)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Investment_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2220,13 +2176,7 @@ func (ec *executionContext) fieldContext_Investment_amount(_ context.Context, fi
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "raw":
-				return ec.fieldContext_NumericValue_raw(ctx, field)
-			case "display":
-				return ec.fieldContext_NumericValue_display(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NumericValue", field.Name)
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2258,9 +2208,9 @@ func (ec *executionContext) _Investment_valuation(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.NumericValue)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Investment_valuation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2270,13 +2220,7 @@ func (ec *executionContext) fieldContext_Investment_valuation(_ context.Context,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "raw":
-				return ec.fieldContext_NumericValue_raw(ctx, field)
-			case "display":
-				return ec.fieldContext_NumericValue_display(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NumericValue", field.Name)
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2717,94 +2661,6 @@ func (ec *executionContext) fieldContext_Mutation_createCompany(ctx context.Cont
 	if fc.Args, err = ec.field_Mutation_createCompany_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NumericValue_raw(ctx context.Context, field graphql.CollectedField, obj *model.NumericValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NumericValue_raw(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Raw, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(float64)
-	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NumericValue_raw(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NumericValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _NumericValue_display(ctx context.Context, field graphql.CollectedField, obj *model.NumericValue) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NumericValue_display(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Display, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_NumericValue_display(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "NumericValue",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
 	}
 	return fc, nil
 }
@@ -5814,50 +5670,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
-var numericValueImplementors = []string{"NumericValue"}
-
-func (ec *executionContext) _NumericValue(ctx context.Context, sel ast.SelectionSet, obj *model.NumericValue) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, numericValueImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("NumericValue")
-		case "raw":
-			out.Values[i] = ec._NumericValue_raw(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "display":
-			out.Values[i] = ec._NumericValue_display(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -6584,20 +6396,6 @@ func (ec *executionContext) marshalNInvestment2ᚕᚖcdsᚑgraphqlᚑpocᚋgraph
 func (ec *executionContext) unmarshalNNewCompany2cdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNewCompany(ctx context.Context, v any) (model.NewCompany, error) {
 	res, err := ec.unmarshalInputNewCompany(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNNumericValue2cdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx context.Context, sel ast.SelectionSet, v model.NumericValue) graphql.Marshaler {
-	return ec._NumericValue(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNNumericValue2ᚖcdsᚑgraphqlᚑpocᚋgraphᚋmodelᚐNumericValue(ctx context.Context, sel ast.SelectionSet, v *model.NumericValue) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._NumericValue(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) (string, error) {

@@ -12,7 +12,7 @@ import (
 
 type CompanyService interface {
 	GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error)
-	GetSummaryKPIForCompanies(ctx context.Context, ids []*string) ([]*dto.KPISummary, []error)
+	GetSummaryKPIForCompanies(ctx context.Context, ids []int) ([]*dto.KPISummary, []error)
 }
 
 type companyService struct {
@@ -79,19 +79,8 @@ func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([
 	return companies, nil
 }
 
-func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []*string) ([]*dto.KPISummary, []error) {
-	intIds := []int{}
-	for _, id := range ids {
-		newId, err := strconv.Atoi(*id)
-
-		if err != nil {
-			return nil, []error{fmt.Errorf("error converting id to int: %v", err)}
-		}
-
-		intIds = append(intIds, newId)
-	}
-
-	summaryKPIs, err := s.profileServiceClient.GetSummaryKPIForCompanies(ctx, intIds)
+func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []int) ([]*dto.KPISummary, []error) {
+	summaryKPIs, err := s.profileServiceClient.GetSummaryKPIForCompanies(ctx, ids)
 
 	if err != nil {
 		return nil, []error{fmt.Errorf("error getting summary KPIs for companies: %v", err)}
@@ -100,8 +89,15 @@ func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []*s
 	summaryKPIsDTO := []*dto.KPISummary{}
 
 	for _, summaryKPI := range summaryKPIs {
+		ceo := &dto.KeyPerson{
+			Id:       summaryKPI.Ceo.Id,
+			FullName: summaryKPI.Ceo.FullName,
+			Title:    summaryKPI.Ceo.Title,
+		}
+
 		summaryKPIsDTO = append(summaryKPIsDTO, &dto.KPISummary{
 			MarketCap: summaryKPI.MarketCap,
+			Ceo:       ceo,
 		})
 	}
 
