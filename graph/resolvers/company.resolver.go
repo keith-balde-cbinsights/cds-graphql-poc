@@ -24,6 +24,10 @@ func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) (
 		return nil, err
 	}
 
+	for _, investment := range investments {
+		investment.Investor = obj
+	}
+
 	return investments, nil
 }
 

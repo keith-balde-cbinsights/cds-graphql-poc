@@ -119,11 +119,12 @@ func (s *companyService) GetInvestments(ctx context.Context, ids []int) ([][]*mo
 		resultItem := []*model.Investment{}
 		for _, investment := range company.Investments {
 			resultItem = append(resultItem, &model.Investment{
-				ID:        strconv.Itoa(investment.Id),
-				RoundName: investment.RoundName,
-				Date:      investment.Date,
-				Amount:    investment.Amount,
-				Valuation: investment.Valuation,
+				ID:            strconv.Itoa(investment.Id),
+				RoundName:     investment.RoundName,
+				Date:          investment.Date,
+				Amount:        investment.Amount,
+				Valuation:     investment.Valuation,
+				ReceiverIDOrg: investment.InvestedIdOrg,
 			})
 		}
 

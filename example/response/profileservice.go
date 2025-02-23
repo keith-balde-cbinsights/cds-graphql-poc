@@ -138,7 +138,7 @@ func PopulateInvestments() {
 				Date:          time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				Amount:        1000000,
 				Valuation:     10000000,
-				InvestedIdOrg: 1,
+				InvestedIdOrg: 2,
 			},
 			{
 				Id:            2,
@@ -146,7 +146,7 @@ func PopulateInvestments() {
 				Date:          time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 				Amount:        2000000,
 				Valuation:     20000000,
-				InvestedIdOrg: 1,
+				InvestedIdOrg: 3,
 			},
 		},
 	}
@@ -158,7 +158,7 @@ func PopulateInvestments() {
 				Date:          time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 				Amount:        3000000,
 				Valuation:     30000000,
-				InvestedIdOrg: 2,
+				InvestedIdOrg: 3,
 			},
 		},
 	}
@@ -170,7 +170,7 @@ func PopulateInvestments() {
 				Date:          time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 				Amount:        4000000,
 				Valuation:     40000000,
-				InvestedIdOrg: 3,
+				InvestedIdOrg: 2,
 			},
 		},
 	}
