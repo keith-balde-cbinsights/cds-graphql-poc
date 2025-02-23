@@ -82,7 +82,7 @@ func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([
 func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []*string) ([]*dto.KPISummary, []error) {
 	intIds := []int{}
 	for _, id := range ids {
-		newId, err := strconv.Atoi(id)
+		newId, err := strconv.Atoi(*id)
 
 		if err != nil {
 			return nil, []error{fmt.Errorf("error converting id to int: %v", err)}
