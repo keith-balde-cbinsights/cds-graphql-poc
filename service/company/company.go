@@ -1,4 +1,4 @@
-package service
+package company
 
 import (
 	"cds-graphql-poc/client/profileservice"
@@ -10,23 +10,23 @@ import (
 	"strconv"
 )
 
-type CompanyService interface {
+type Service interface {
 	GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error)
 	GetSummaryKPIForCompanies(ctx context.Context, ids []int) ([]*dto.KPISummary, []error)
 	GetInvestments(ctx context.Context, ids []int) ([][]*model.Investment, []error)
 }
 
-type companyService struct {
+type service struct {
 	profileServiceClient profileservice.Client
 }
 
-func NewCompanyService() *companyService {
-	return &companyService{
+func NewService() *service {
+	return &service{
 		profileServiceClient: profileservice.NewClient(),
 	}
 }
 
-func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error) {
+func (s *service) GetCompaniesById(ctx context.Context, ids []*string) ([]*model.Company, []error) {
 	intIds := []int{}
 	for _, id := range ids {
 		newId, err := strconv.Atoi(*id)
@@ -80,7 +80,7 @@ func (s *companyService) GetCompaniesById(ctx context.Context, ids []*string) ([
 	return companies, nil
 }
 
-func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []int) ([]*dto.KPISummary, []error) {
+func (s *service) GetSummaryKPIForCompanies(ctx context.Context, ids []int) ([]*dto.KPISummary, []error) {
 	summaryKPIs, err := s.profileServiceClient.GetSummaryKPIForCompanies(ctx, ids)
 
 	if err != nil {
@@ -106,7 +106,7 @@ func (s *companyService) GetSummaryKPIForCompanies(ctx context.Context, ids []in
 	return summaryKPIsDTO, nil
 }
 
-func (s *companyService) GetInvestments(ctx context.Context, ids []int) ([][]*model.Investment, []error) {
+func (s *service) GetInvestments(ctx context.Context, ids []int) ([][]*model.Investment, []error) {
 	companies, err := s.profileServiceClient.GetInvestments(ctx, ids)
 
 	if err != nil {

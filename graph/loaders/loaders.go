@@ -3,7 +3,7 @@ package loaders
 import (
 	"cds-graphql-poc/dto"
 	"cds-graphql-poc/graph/model"
-	"cds-graphql-poc/service"
+	"cds-graphql-poc/service/company"
 	"context"
 	"net/http"
 
@@ -24,7 +24,7 @@ type Loaders struct {
 }
 
 // NewLoaders instantiates data loaders for the middleware
-func NewLoaders(companyService service.CompanyService) *Loaders {
+func NewLoaders(companyService company.Service) *Loaders {
 	return &Loaders{
 		CompanyLoader:    dataloadgen.NewLoader(companyService.GetCompaniesById),
 		SummaryKPILoader: dataloadgen.NewLoader(companyService.GetSummaryKPIForCompanies),
@@ -34,7 +34,7 @@ func NewLoaders(companyService service.CompanyService) *Loaders {
 
 // Middleware injects data loaders into the context
 func Middleware(
-	companyService service.CompanyService,
+	companyService company.Service,
 	next http.Handler,
 ) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

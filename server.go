@@ -4,7 +4,7 @@ import (
 	"cds-graphql-poc/graph"
 	"cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/resolvers"
-	"cds-graphql-poc/service"
+	"cds-graphql-poc/service/company"
 	"log"
 	"net/http"
 	"os"
@@ -25,7 +25,7 @@ func main() {
 		port = defaultPort
 	}
 
-	companyService := service.NewCompanyService()
+	companyService := company.NewService()
 
 	rootResolver := &resolvers.Resolver{
 		CompanyService: companyService,
