@@ -8,8 +8,20 @@ import (
 )
 
 func (r *investmentResolver) Receiver(ctx context.Context, obj *model.Investment) (*model.Company, error) {
-	id := fmt.Sprintf("%d", obj.ReceiverIDOrg)
-	return r.Loaders.GetCompany(ctx, &id)
+	if company, exists := r.Cache.GetCompany(ctx, int(obj.ReceiverIDOrg)); exists {
+		return company, nil
+	} else {
+		id := fmt.Sprintf("%d", obj.ReceiverIDOrg)
+
+		company, err := r.Loaders.GetCompany(ctx, &id)
+		if err != nil {
+			return nil, err
+		}
+
+		r.Cache.AddCompany(ctx, company)
+
+		return company, nil
+	}
 }
 
 func (r *Resolver) Investment() graph.InvestmentResolver { return &investmentResolver{r} }

@@ -7,8 +7,8 @@ package resolvers
 import (
 	"cds-graphql-poc/graph"
 	"cds-graphql-poc/graph/model"
+	"cds-graphql-poc/utils"
 
-	// "cds-graphql-poc/graph/utils"
 	"context"
 )
 
@@ -22,7 +22,49 @@ func (r *queryResolver) CompaniesByIDOrg(ctx context.Context, ids []*string) ([]
 
 	// return companies, nil
 
-	return r.Loaders.GetCompanies(ctx, ids)
+	intIds, err := utils.ConvertStringsToInts(ids)
+	if err != nil {
+		return nil, err
+	}
+
+	companies, notFound := r.Cache.GetCompanies(ctx, intIds)
+
+	if len(notFound) > 0 {
+		notFoundStrings, err := utils.ConvertIntsToStrings(notFound)
+		if err != nil {
+			return nil, err
+		}
+
+		newCompanies, err := r.Loaders.GetCompanies(ctx, notFoundStrings)
+
+		if err != nil {
+			return nil, err
+		}
+
+		err = r.Cache.AddCompanies(ctx, newCompanies)
+
+		if err != nil {
+			return nil, err
+		}
+
+		for _, company := range newCompanies {
+			idInt, err := utils.StringToInt(&company.ID)
+
+			if err != nil {
+				return nil, err
+			}
+
+			companies[idInt] = company
+		}
+	}
+
+	// convert companies to []*model.Company based on ids order
+	companiesList := []*model.Company{}
+	for _, id := range intIds {
+		companiesList = append(companiesList, companies[id])
+	}
+
+	return companiesList, nil
 }
 
 // Query returns graph.QueryResolver implementation.
