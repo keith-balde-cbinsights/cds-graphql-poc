@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"cds-graphql-poc/graph"
-	l "cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/model"
 
 	// "cds-graphql-poc/graph/utils"
@@ -23,7 +22,7 @@ func (r *queryResolver) CompaniesByIDOrg(ctx context.Context, ids []*string) ([]
 
 	// return companies, nil
 
-	return l.GetCompanies(ctx, ids)
+	return r.Loaders.GetCompanies(ctx, ids)
 }
 
 // Query returns graph.QueryResolver implementation.
