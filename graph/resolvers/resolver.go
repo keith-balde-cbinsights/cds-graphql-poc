@@ -4,6 +4,7 @@ package resolvers
 
 import (
 	"cds-graphql-poc/graph/loaders"
+	"cds-graphql-poc/middleware/contextcache"
 )
 
 // This file will not be regenerated automatically.
@@ -13,4 +14,5 @@ import (
 type Resolver struct {
 	// CompanyService company.Service
 	Loaders *loaders.Loaders
+	Cache   *contextcache.Cache
 }

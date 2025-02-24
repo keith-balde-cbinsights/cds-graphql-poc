@@ -5,6 +5,7 @@ import (
 	"cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/resolvers"
 	"cds-graphql-poc/middleware"
+	"cds-graphql-poc/middleware/contextcache"
 	"cds-graphql-poc/service/company"
 	"log"
 	"net/http"
@@ -28,8 +29,10 @@ func main() {
 
 	companyService := company.NewService()
 	loaders := loaders.NewLoaders(companyService)
+	cache := contextcache.NewCache()
 
 	rootResolver := &resolvers.Resolver{
+		Cache:   cache,
 		Loaders: loaders,
 	}
 
@@ -47,6 +50,7 @@ func main() {
 	})
 
 	srv := middleware.Loaders(loaders, h)
+	srv = middleware.Cache(cache, srv)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
