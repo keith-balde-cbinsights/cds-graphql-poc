@@ -3,18 +3,31 @@ package loaders
 import (
 	"cds-graphql-poc/dto"
 	"cds-graphql-poc/graph/model"
+	"cds-graphql-poc/utils"
 	"context"
 	"fmt"
 )
 
 func (l *Loaders) GetCompany(ctx context.Context, id *string) (*model.Company, error) {
-	fmt.Println("Using loader GetCompany", id)
+	idInt, err := utils.StringToInt(id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert id to int: %w", err)
+	}
+
+	fmt.Println("Using loader GetCompany", idInt)
 
 	return l.CompanyLoader.Load(ctx, id)
 }
 
 func (l *Loaders) GetCompanies(ctx context.Context, ids []*string) ([]*model.Company, error) {
-	fmt.Println("Using loader GetCompanies", ids)
+	// convert ids to ints
+	intIds, err := utils.ConvertStringsToInts(ids)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert ids to ints: %w", err)
+	}
+
+	fmt.Println("Using loader GetCompanies", intIds)
 
 	return l.CompanyLoader.LoadAll(ctx, ids)
 }
