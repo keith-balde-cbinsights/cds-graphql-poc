@@ -20,7 +20,6 @@ func Loaders(
 
 // Cache Middleware injects the cache into the context
 func Cache(
-	cache *c.Cache,
 	next http.Handler,
 ) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

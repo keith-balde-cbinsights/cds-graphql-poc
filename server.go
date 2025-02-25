@@ -50,7 +50,7 @@ func main() {
 	})
 
 	srv := middleware.Loaders(loaders, h)
-	srv = middleware.Cache(cache, srv)
+	srv = middleware.Cache(srv)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

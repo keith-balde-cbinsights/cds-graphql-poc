@@ -13,6 +13,7 @@ type CompanyCacheKey struct{}
 type InvestmentCacheKey struct{}
 type SummaryKPICacheKey struct{}
 
+// Context keys for caching
 func GetCompanyCacheKey() *CompanyCacheKey {
 	return &CompanyCacheKey{}
 }
@@ -25,19 +26,10 @@ func GetSummaryKPICacheKey() *SummaryKPICacheKey {
 	return &SummaryKPICacheKey{}
 }
 
-// Context key for caching
-type Cache struct {
-	CompanyCache    map[int]*model.Company
-	InvestmentCache map[int][]*model.Investment
-	SummaryKPICache map[int]*dto.KPISummary
-}
+type Cache struct{}
 
 func NewCache() *Cache {
-	return &Cache{
-		CompanyCache:    make(map[int]*model.Company),
-		InvestmentCache: make(map[int][]*model.Investment),
-		SummaryKPICache: make(map[int]*dto.KPISummary),
-	}
+	return &Cache{}
 }
 
 // GetCompanyCache retrieves the company cache from the context
