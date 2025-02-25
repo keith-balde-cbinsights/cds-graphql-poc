@@ -18,7 +18,16 @@ func (r *companyResolver) FundingRounds(ctx context.Context, obj *model.Company)
 
 // Investments is the resolver for the investments field.
 func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) ([]*model.Investment, error) {
+	if investments, exists := r.Cache.GetInvestmentsForCompany(ctx, int(obj.OrgID)); exists {
+		return investments, nil
+	}
+
 	investments, err := r.Loaders.GetInvestmentsForCompany(ctx, int(obj.OrgID))
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.Cache.AddInvestmentsForCompany(ctx, obj.ID, investments)
 	if err != nil {
 		return nil, err
 	}

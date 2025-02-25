@@ -95,7 +95,7 @@ func (c *Cache) GetCompanies(ctx context.Context, ids []int) (map[int]*model.Com
 	return companies, notFound
 }
 
-func (c *Cache) GetInvestment(ctx context.Context, id int) ([]*model.Investment, bool) {
+func (c *Cache) GetInvestmentsForCompany(ctx context.Context, id int) ([]*model.Investment, bool) {
 	cache := GetInvestmentCache(ctx)
 	investments, ok := cache[id]
 	return investments, ok
