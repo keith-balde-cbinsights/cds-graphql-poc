@@ -93,6 +93,12 @@ func (c *Cache) GetInvestmentsForCompany(ctx context.Context, id int) ([]*model.
 	return investments, ok
 }
 
+func (c *Cache) GetSummaryKPI(ctx context.Context, id int) (*dto.KPISummary, bool) {
+	cache := GetSummaryKPICache(ctx)
+	summaryKPI, ok := cache[id]
+	return summaryKPI, ok
+}
+
 func (c *Cache) AddCompany(ctx context.Context, company *model.Company) error {
 	cache := GetCompanyCache(ctx)
 

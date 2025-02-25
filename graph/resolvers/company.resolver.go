@@ -41,7 +41,16 @@ func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) (
 
 // MarketCap is the resolver for the marketCap field.
 func (r *companyResolver) MarketCap(ctx context.Context, obj *model.Company) (float64, error) {
+	if summaryKPI, exists := r.Cache.GetSummaryKPI(ctx, int(obj.OrgID)); exists {
+		return summaryKPI.MarketCap, nil
+	}
+
 	kpiSummary, err := r.Loaders.GetSummaryKPI(ctx, int(obj.OrgID))
+	if err != nil {
+		return 0, err
+	}
+
+	err = r.Cache.AddSummaryKPI(ctx, obj.ID, kpiSummary)
 	if err != nil {
 		return 0, err
 	}
@@ -51,7 +60,16 @@ func (r *companyResolver) MarketCap(ctx context.Context, obj *model.Company) (fl
 
 // TotalRaised is the resolver for the totalRaised field.
 func (r *companyResolver) TotalRaised(ctx context.Context, obj *model.Company) (float64, error) {
+	if summaryKPI, exists := r.Cache.GetSummaryKPI(ctx, int(obj.OrgID)); exists {
+		return summaryKPI.TotalFunding, nil
+	}
+
 	kpiSummary, err := r.Loaders.GetSummaryKPI(ctx, int(obj.OrgID))
+	if err != nil {
+		return 0, err
+	}
+
+	err = r.Cache.AddSummaryKPI(ctx, obj.ID, kpiSummary)
 	if err != nil {
 		return 0, err
 	}
@@ -61,7 +79,21 @@ func (r *companyResolver) TotalRaised(ctx context.Context, obj *model.Company) (
 
 // Ceo is the resolver for the ceo field.
 func (r *companyResolver) Ceo(ctx context.Context, obj *model.Company) (*model.KeyPerson, error) {
+	if summaryKPI, exists := r.Cache.GetSummaryKPI(ctx, int(obj.OrgID)); exists {
+		return &model.KeyPerson{
+			ID:      fmt.Sprintf("%d", summaryKPI.Ceo.Id),
+			Name:    summaryKPI.Ceo.FullName,
+			Title:   summaryKPI.Ceo.Title,
+			Company: obj,
+		}, nil
+	}
+
 	kpiSummary, err := r.Loaders.GetSummaryKPI(ctx, int(obj.OrgID))
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.Cache.AddSummaryKPI(ctx, obj.ID, kpiSummary)
 	if err != nil {
 		return nil, err
 	}
