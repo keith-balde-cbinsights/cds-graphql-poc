@@ -3,7 +3,6 @@ package resolvers
 //go:generate go run github.com/99designs/gqlgen generate
 
 import (
-	"cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/middleware/contextcache"
 )
 
@@ -13,6 +12,5 @@ import (
 
 type Resolver struct {
 	// CompanyService company.Service
-	Loaders *loaders.Loaders
-	Cache   *contextcache.Cache
+	Cache *contextcache.Cache
 }

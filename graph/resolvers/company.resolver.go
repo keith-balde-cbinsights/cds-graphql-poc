@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"cds-graphql-poc/graph"
+	l "cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/model"
 	"context"
 	"fmt"
@@ -22,7 +23,7 @@ func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) (
 		return investments, nil
 	}
 
-	investments, err := r.Loaders.GetInvestmentsForCompany(ctx, int(obj.OrgID))
+	investments, err := l.GetInvestmentsForCompany(ctx, int(obj.OrgID))
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,7 @@ func (r *companyResolver) MarketCap(ctx context.Context, obj *model.Company) (fl
 		return summaryKPI.MarketCap, nil
 	}
 
-	kpiSummary, err := r.Loaders.GetSummaryKPI(ctx, int(obj.OrgID))
+	kpiSummary, err := l.GetSummaryKPI(ctx, int(obj.OrgID))
 	if err != nil {
 		return 0, err
 	}
@@ -64,7 +65,7 @@ func (r *companyResolver) TotalRaised(ctx context.Context, obj *model.Company) (
 		return summaryKPI.TotalFunding, nil
 	}
 
-	kpiSummary, err := r.Loaders.GetSummaryKPI(ctx, int(obj.OrgID))
+	kpiSummary, err := l.GetSummaryKPI(ctx, int(obj.OrgID))
 	if err != nil {
 		return 0, err
 	}
@@ -88,7 +89,7 @@ func (r *companyResolver) Ceo(ctx context.Context, obj *model.Company) (*model.K
 		}, nil
 	}
 
-	kpiSummary, err := r.Loaders.GetSummaryKPI(ctx, int(obj.OrgID))
+	kpiSummary, err := l.GetSummaryKPI(ctx, int(obj.OrgID))
 	if err != nil {
 		return nil, err
 	}

@@ -9,10 +9,11 @@ import (
 
 // Loaders Middleware injects data loaders into the context
 func Loaders(
-	loaders *l.Loaders,
 	next http.Handler,
 ) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		loaders := l.NewLoaders()
+
 		r = r.WithContext(context.WithValue(r.Context(), l.GetLoadersKey(), loaders))
 		next.ServeHTTP(w, r)
 	})

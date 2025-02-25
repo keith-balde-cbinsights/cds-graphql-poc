@@ -2,6 +2,7 @@ package resolvers
 
 import (
 	"cds-graphql-poc/graph"
+	l "cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/model"
 	"context"
 	"fmt"
@@ -13,7 +14,7 @@ func (r *investmentResolver) Receiver(ctx context.Context, obj *model.Investment
 	} else {
 		id := fmt.Sprintf("%d", obj.ReceiverIDOrg)
 
-		company, err := r.Loaders.GetCompany(ctx, &id)
+		company, err := l.GetCompany(ctx, &id)
 		if err != nil {
 			return nil, err
 		}

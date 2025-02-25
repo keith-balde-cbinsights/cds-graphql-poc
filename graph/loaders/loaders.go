@@ -27,7 +27,9 @@ func GetLoadersKey() ctxKey {
 }
 
 // NewLoaders instantiates data loaders for the middleware
-func NewLoaders(companyService company.Service) *Loaders {
+func NewLoaders() *Loaders {
+	companyService := company.NewService()
+
 	return &Loaders{
 		CompanyLoader:    dataloadgen.NewLoader(companyService.GetCompaniesById),
 		SummaryKPILoader: dataloadgen.NewLoader(companyService.GetSummaryKPIForCompanies),

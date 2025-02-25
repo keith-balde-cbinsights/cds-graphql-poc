@@ -6,6 +6,7 @@ package resolvers
 
 import (
 	"cds-graphql-poc/graph"
+	l "cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/model"
 	"cds-graphql-poc/utils"
 
@@ -35,7 +36,7 @@ func (r *queryResolver) CompaniesByIDOrg(ctx context.Context, ids []*string) ([]
 			return nil, err
 		}
 
-		newCompanies, err := r.Loaders.GetCompanies(ctx, notFoundStrings)
+		newCompanies, err := l.GetCompanies(ctx, notFoundStrings)
 
 		if err != nil {
 			return nil, err

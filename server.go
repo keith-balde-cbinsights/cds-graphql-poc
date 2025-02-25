@@ -2,11 +2,9 @@ package main
 
 import (
 	"cds-graphql-poc/graph"
-	"cds-graphql-poc/graph/loaders"
 	"cds-graphql-poc/graph/resolvers"
 	"cds-graphql-poc/middleware"
 	"cds-graphql-poc/middleware/contextcache"
-	"cds-graphql-poc/service/company"
 	"log"
 	"net/http"
 	"os"
@@ -27,13 +25,10 @@ func main() {
 		port = defaultPort
 	}
 
-	companyService := company.NewService()
-	loaders := loaders.NewLoaders(companyService)
 	cache := contextcache.NewCache()
 
 	rootResolver := &resolvers.Resolver{
-		Cache:   cache,
-		Loaders: loaders,
+		Cache: cache,
 	}
 
 	h := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: rootResolver}))
@@ -49,7 +44,7 @@ func main() {
 		Cache: lru.New[string](100),
 	})
 
-	srv := middleware.Loaders(loaders, h)
+	srv := middleware.Loaders(h)
 	srv = middleware.Cache(srv)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
