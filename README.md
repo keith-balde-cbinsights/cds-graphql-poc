@@ -102,4 +102,4 @@ query getCompanies {
  3. **Query** - A read operation used to fetch data from the API.
  4. **Mutation** - A write operation used to modify data on the server.
  5. **Field** - The unit of data requested from a GraphQL API; corresponds to an attribute of a type.
- 6. **Resolver** - A function that fetches data for a particular field in a GraphQL query or mutation.
+ 6. **Resolver** - A function that fetches data for a particular field in a GraphQL query or mutation. For example, the `Investments` resolver will fetch the investments for the field `investments` in a company type whenever the field is provided in the query.
