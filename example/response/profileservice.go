@@ -170,7 +170,7 @@ func PopulateInvestments() {
 				Date:          time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 				Amount:        4000000,
 				Valuation:     40000000,
-				InvestedIdOrg: 2,
+				InvestedIdOrg: 1,
 			},
 		},
 	}
