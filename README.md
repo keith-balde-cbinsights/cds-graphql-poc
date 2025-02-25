@@ -84,7 +84,7 @@ query getCompanies {
  - DataLoaders not only batch multiple requests but also **deduplicate** identical requests within the same request cycle. If dataloaders were used for the hypothetical query above, it will allow the resolvers for the fields in the deeper levels of the query to reuse data that was already previously fetched when available.
 
 ## Drawbacks
- - GraphQL is not currently supported in the company (At least at the time of this writing)
+ - GraphQL is not currently supported in the company. (At least at the time of this writing)
    - It will take some time to setup the service to behave like our other existing service. (Deployment, Security, etc.)
  - We currently lack support for data retrievals that we need for batch requests. While GraphQL can still be used to elegantly compose the data clients need, we will still be using non-batch data retrievals. 
    - It would be ideal to get support from the teams that own the data we need to fetch.
