@@ -17,8 +17,6 @@ type Company {
     status: String!
     # The location of the company
     location: CompanyLocation!
-    # The funding rounds of the company
-    fundingRounds: [FundingRound]!
     # The investments of the company
     investments: [Investment]!
     # The market cap of the company

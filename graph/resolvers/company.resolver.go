@@ -12,11 +12,6 @@ import (
 	"fmt"
 )
 
-// FundingRounds is the resolver for the fundingRounds field.
-func (r *companyResolver) FundingRounds(ctx context.Context, obj *model.Company) ([]*model.FundingRound, error) {
-	panic(fmt.Errorf("not implemented: FundingRounds - fundingRounds"))
-}
-
 // Investments is the resolver for the investments field.
 func (r *companyResolver) Investments(ctx context.Context, obj *model.Company) ([]*model.Investment, error) {
 	if investments, exists := r.Cache.GetInvestmentsForCompany(ctx, int(obj.OrgID)); exists {
